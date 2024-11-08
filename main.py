@@ -1,6 +1,6 @@
 from routine import Routine 
 from tkinter import *
-from tkinter import ttk
+from tkinter import messagebox, ttk
 import pyautogui
 import time
 from functools import partial
@@ -56,44 +56,69 @@ def update_command_list():
 # Funções para adicionar nas rotinas
 def write_txt(e_text):
     # Escreve um texto
-    append_func(partial(pyautogui.write, e_text))
+    if e_text == "":
+        messagebox.showerror("Erro", "Digite algum texto")
+    else:
+        append_func(partial(pyautogui.write, e_text))
 
 def add_pause_time(pause):
-    # Adiciona uma pausa em segundos
-    append_func(partial(time.sleep,int(pause)))
+    # Adiciona uma pausa em segundos 
+    try:
+        if pause == '':
+             messagebox.showerror("Erro", "Digite algum valor")
+        else:
+            value = float(pause)   
+            append_func(partial(time.sleep,value))
+    except ValueError:
+        messagebox.showerror("Erro", "Precisa ser um valor numérico")
+    
+        
 
 def click_point(double_click = False, right_click = False):
-    # Adiciona um ponto de click normal, duplo ou botão direito 
-    show_coords = ttk.Label(enrty_command_div, text='Leve o mouse para a posição do click')
-    show_coords.grid(column=0,row=3)
-    
-    def countdown(i):
-        if i > 0:
-            show_coords.config(text=f'{i} segundos para definir a posição')
-            enrty_command_div.after(1000, countdown, i - 1)
-        else:
-            coorX, coorY = pyautogui.position()
-            show_coords.config(text=f'X={coorX}, Y={coorY}')
-            
-            if double_click:
-                append_func(partial(pyautogui.doubleClick,x=coorX,y=coorY))
-            elif right_click:
-                append_func(partial(pyautogui.rightClick,x=coorX,y=coorY))
+    if double_click and right_click:
+        messagebox.showerror('Erro', "Selecionar apenas UM tipo de clique")
+    else:
+        # Adiciona um ponto de click normal, duplo ou botão direito 
+        show_coords = ttk.Label(enrty_command_div, text='Leve o mouse para a posição do click')
+        show_coords.grid(column=0,row=3)
+        
+        def countdown(i):
+            if i > 0:
+                show_coords.config(text=f'{i} segundos para definir a posição')
+                enrty_command_div.after(1000, countdown, i - 1)
             else:
-                append_func(partial(pyautogui.click,x=coorX,y=coorY))
-            enrty_command_div.after(5000, show_coords.destroy)
+                coorX, coorY = pyautogui.position()
+                show_coords.config(text=f'X={coorX}, Y={coorY}')
                 
-    countdown(TIME_UNTIL_CLICK)
+                if double_click:
+                    append_func(partial(pyautogui.doubleClick,x=coorX,y=coorY))
+                elif right_click:
+                    append_func(partial(pyautogui.rightClick,x=coorX,y=coorY))
+                else:
+                    append_func(partial(pyautogui.click,x=coorX,y=coorY))
+                enrty_command_div.after(5000, show_coords.destroy)
+                    
+        countdown(TIME_UNTIL_CLICK)
     
 def hotkey(hotkey):
     # Adiciona comandos de teclas múltiplas
-    hotkey_list = hotkey.split(',')
-    append_func(partial(pyautogui.hotkey,*hotkey_list))
+    if hotkey == '':
+        messagebox.showerror('Error', 'Digite um comando')
+    else:
+        hotkey_list = hotkey.split(',')
+        
+    if len(hotkey_list) <= 1:
+        messagebox.showerror('Error', 'É necessário digitar MAIS que UMA tecla')
+    else:
+        append_func(partial(pyautogui.hotkey,*hotkey_list))
     
     
 def press_key(key):
     # Adiciona comando de tecla única
-    append_func(partial(pyautogui.press, key))
+    if key == '':
+        messagebox.showerror('Error', 'Digite uma tecla')
+    else:
+        append_func(partial(pyautogui.press, key))
     
 # COMANDOS DO USUÁRIO
 # Adicionar funções à rotina
@@ -112,13 +137,18 @@ def append_func(function):
 
 # Excluir comandos dentro das rotinas
 def exclude_func():
- 
-    loaded_routes[combo_routine.get()].exclude_function()
-    save_route()
-    update_command_list()
+    if combo_routine.get() == '':
+        messagebox.showerror('Error', 'Por favor, selecione um mapa')
+    else:
+        loaded_routes[combo_routine.get()].exclude_function()
+        save_route()
+        update_command_list()
    
 # Executar rota de comandos    
-def execute_route():   
+def execute_route():
+    if combo_routine.get() == '':
+        messagebox.showerror('Error', "Por favor, selecione um mapa")
+    else:
         while True:
             for function in loaded_routes[combo_routine.get()].functions:
                 function()
@@ -130,22 +160,33 @@ def save_route(file_name="mapa_comandos.pkl"):
         
 # Criar novas rotas
 def create_objects(key, file_name='mapa_comandos.pkl', ):
-    loaded_routes[key] = Routine()
+    if key == '':
+        messagebox.showerror('Error', 'Digite um nome, por favor')
+    else:
+        loaded_routes[key] = Routine()
 
-    save_route()
+        save_route()
+            
+        entry_create_route.delete(0, END)
         
-    entry_create_route.delete(0, END)
-    
-    update_routine_list()
+        update_routine_list()
 
 # Excluir rotinas
 def exclude_routines():
-    
-      loaded_routes.pop(combo_routine.get())
-      
-      save_route()
-      
-      update_routine_list()
+    if combo_routine.get() == '':
+        messagebox.showerror('Error', 'Por favor, selecione um mapa primeiro')
+    else:
+        result = messagebox.askokcancel('Excluir mapa de comandos', 'Tem certeza?')
+        
+        if result:
+            loaded_routes.pop(combo_routine.get())
+            
+            save_route()
+            
+            update_routine_list()
+            combo_routine.delete(0, END)
+        else:
+            return
       
 
 # Interface
