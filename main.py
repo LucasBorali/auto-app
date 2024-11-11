@@ -14,7 +14,7 @@ TIME_UNTIL_CLICK = 5
 def set_pause_time(*args):
         pyautogui.PAUSE = float(speed_entry.get())
 
-# PUXAR TABELAS
+# PUXAR QUANTIDADE DE LINHAS EM UMA TABELA PARA REALIZAR O LOOPING
 # ORGANIZAR O CÓDIGO
 # Criar janela de certeza para comandos críticos
 
@@ -252,8 +252,8 @@ command_listbox.pack()
 
 config_buttons_div = ttk.Frame()
 config_buttons_div.pack(pady=15)
-ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Executar rotina', command=execute_route).grid(column=0, row=0, padx=5.5)
-ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Excluir rotina', command=exclude_routines).grid(column=1, row=0, padx=5.5)
+ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Executar mapa', command=execute_route).grid(column=0, row=0, padx=5.5)
+ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Excluir mapa', command=exclude_routines).grid(column=1, row=0, padx=5.5)
 ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Excluir comando', command=exclude_func).grid(column=2, row=0, padx=5.5)
 
 
