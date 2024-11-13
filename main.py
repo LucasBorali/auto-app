@@ -5,6 +5,7 @@ import pyautogui
 import time
 from functools import partial
 import pickle
+import pandas as pd
 
 
 
@@ -149,9 +150,20 @@ def execute_route():
     if combo_routine.get() == '':
         messagebox.showerror('Error', "Por favor, selecione um mapa")
     else:
-        while True:
-            for function in loaded_routes[combo_routine.get()].functions:
-                function()
+        if loaded_routes[combo_routine.get()].table_sheet:
+            df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get].table_sheet}')
+            i = 1
+            while i <= len(df):
+                for function in loaded_routes[combo_routine.get()].functions:
+                    function()
+                i += 1
+        else:
+            while i <= len(df):
+                for function in loaded_routes[combo_routine.get()].functions:
+                    function()
+                
+                
+                    
 
 # Atualizar rotina com as novas funções
 def save_route(file_name="mapa_comandos.pkl"):
@@ -258,6 +270,3 @@ ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Excluir comando'
 
 
 root.mainloop()
-
-
-
