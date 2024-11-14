@@ -150,13 +150,16 @@ def execute_route():
     if combo_routine.get() == '':
         messagebox.showerror('Error', "Por favor, selecione um mapa")
     else:
-        if loaded_routes[combo_routine.get()].table_sheet:
-            df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get].table_sheet}')
+        if not loaded_routes[combo_routine.get()].table_sheet:
+            df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get()].table_sheet}')
             i = 1
+            time.sleep(2)
+            print('começou')
             while i <= len(df):
                 for function in loaded_routes[combo_routine.get()].functions:
                     function()
                 i += 1
+                time.sleep(1)
         else:
             while i <= len(df):
                 for function in loaded_routes[combo_routine.get()].functions:
