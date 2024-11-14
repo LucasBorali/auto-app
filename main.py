@@ -265,6 +265,12 @@ ttk.Button(enrty_command_div, width=25,  cursor='hand2', text='Criar novo mapa',
 command_listbox = Listbox(root, width=50 , height=7)
 command_listbox.pack()
 
+df = pd.read_excel('./DATA_BASES/teste1.xlsx')
+
+looping_label = ttk.Label(root, text=f'O mapa será executado {len(df)} vezes')
+looping_label.pack()
+
+
 config_buttons_div = ttk.Frame()
 config_buttons_div.pack(pady=15)
 ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Executar mapa', command=execute_route).grid(column=0, row=0, padx=5.5)
