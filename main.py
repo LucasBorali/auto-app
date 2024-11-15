@@ -1,11 +1,12 @@
 from routine import Routine 
 from tkinter import *
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 import pyautogui
 import time
 from functools import partial
 import pickle
 import pandas as pd
+import os
 
 
 
@@ -46,9 +47,21 @@ def update_command_list():
     
     if selected_routine in loaded_routes:
         
+        
         for func in loaded_routes[selected_routine].functions:
         
             command_listbox.insert(END, f" {func.func.__name__}{func.args}")
+            
+        show_loop_times()  
+            
+            
+def show_loop_times():
+    if loaded_routes[combo_routine.get()].table_sheet:
+        df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get()].table_sheet}')
+        ttk.Label(loop_label_div, text=f'O mapa será executado {len(df)} vezes').grid(row=0, column=0)   
+    else:
+        ttk.Label(loop_label_div, text=f'O mapa será executado em loop').grid(row=0, column=0)
+
             
             
             
@@ -147,21 +160,20 @@ def exclude_func():
    
 # Executar rota de comandos    
 def execute_route():
+    
     if combo_routine.get() == '':
         messagebox.showerror('Error', "Por favor, selecione um mapa")
     else:
-        if not loaded_routes[combo_routine.get()].table_sheet:
+        if loaded_routes[combo_routine.get()].table_sheet:
             df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get()].table_sheet}')
             i = 1
             time.sleep(2)
-            print('começou')
             while i <= len(df):
                 for function in loaded_routes[combo_routine.get()].functions:
                     function()
                 i += 1
                 time.sleep(1)
         else:
-            while i <= len(df):
                 for function in loaded_routes[combo_routine.get()].functions:
                     function()
                 
@@ -178,13 +190,28 @@ def create_objects(key, file_name='mapa_comandos.pkl', ):
     if key == '':
         messagebox.showerror('Error', 'Digite um nome, por favor')
     else:
-        loaded_routes[key] = Routine()
-
-        save_route()
-            
-        entry_create_route.delete(0, END)
+        result = messagebox.askquestion('Configurar planilha', 'Deseja configurar uma planilha para o mapa de comandos?')
         
-        update_routine_list()
+        if result == 'yes':
+            file_path = filedialog.askopenfilename(title="Selecione um arquivo", 
+                                                 initialdir='./DATA_BASES',
+                                       filetypes=[("Arquivos excel", "*.xlsx"), 
+                                                  ("Todos os arquivos", "*.*")])
+            file_name = os.path.basename(file_path)
+            loaded_routes[key] = Routine(file_name)
+           
+        elif result == 'no':
+            loaded_routes[key] = Routine()
+            
+        else:
+            return
+        
+    save_route()
+                
+    entry_create_route.delete(0, END)
+            
+    update_routine_list()
+            
 
 # Excluir rotinas
 def exclude_routines():
@@ -192,7 +219,7 @@ def exclude_routines():
         messagebox.showerror('Error', 'Por favor, selecione um mapa primeiro')
     else:
         result = messagebox.askokcancel('Excluir mapa de comandos', 'Tem certeza?')
-        
+
         if result:
             loaded_routes.pop(combo_routine.get())
             
@@ -265,10 +292,8 @@ ttk.Button(enrty_command_div, width=25,  cursor='hand2', text='Criar novo mapa',
 command_listbox = Listbox(root, width=50 , height=7)
 command_listbox.pack()
 
-df = pd.read_excel('./DATA_BASES/teste1.xlsx')
-
-looping_label = ttk.Label(root, text=f'O mapa será executado {len(df)} vezes')
-looping_label.pack()
+loop_label_div = ttk.Frame()
+loop_label_div.pack()
 
 
 config_buttons_div = ttk.Frame()
