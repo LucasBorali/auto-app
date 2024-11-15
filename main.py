@@ -58,9 +58,10 @@ def update_command_list():
 def show_loop_times():
     if loaded_routes[combo_routine.get()].table_sheet:
         df = pd.read_excel(f'./DATA_BASES/{loaded_routes[combo_routine.get()].table_sheet}')
-        ttk.Label(loop_label_div, text=f'O mapa será executado {len(df)} vezes').grid(row=0, column=0)   
+        loop_label.config(text=f'O mapa será executado {len(df)} vezes')
     else:
-        ttk.Label(loop_label_div, text=f'O mapa será executado em loop').grid(row=0, column=0)
+        loop_label.config(text=f'O mapa será executado em loop')
+        
 
             
             
@@ -292,8 +293,10 @@ ttk.Button(enrty_command_div, width=25,  cursor='hand2', text='Criar novo mapa',
 command_listbox = Listbox(root, width=50 , height=7)
 command_listbox.pack()
 
-loop_label_div = ttk.Frame()
-loop_label_div.pack()
+
+loop_label = ttk.Label(root)
+loop_label.pack()
+
 
 
 config_buttons_div = ttk.Frame()
