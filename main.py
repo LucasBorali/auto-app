@@ -16,15 +16,14 @@ TIME_UNTIL_CLICK = 5
 def set_pause_time(*args):
         pyautogui.PAUSE = float(speed_entry.get())
 
-# PUXAR QUANTIDADE DE LINHAS EM UMA TABELA PARA REALIZAR O LOOPING
+# consertar bug de criação de mapa quando a janela de seleção de planilha é fechada
 # ORGANIZAR O CÓDIGO
-# Criar janela de certeza para comandos críticos
+# Adicionar e excluir comandos em posições específicas
+# Caminho para as planilhas dentro do próprio aplicativo
 
 
 # poder renomear os objetos
-# Balão de instruções
-# Caminho para instruções validadas pelo Dimas
-# xml
+
 
 def load_data(file_name="mapa_comandos.pkl"):
     try:
