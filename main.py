@@ -16,7 +16,7 @@ TIME_UNTIL_CLICK = 5
 def set_pause_time(*args):
         pyautogui.PAUSE = float(speed_entry.get())
 
-# consertar bug de criação de mapa quando a janela de seleção de planilha é fechada
+
 # ORGANIZAR O CÓDIGO
 # Adicionar e excluir comandos em posições específicas
 # Caminho para as planilhas dentro do próprio aplicativo
@@ -198,7 +198,10 @@ def create_objects(key, file_name='mapa_comandos.pkl', ):
                                        filetypes=[("Arquivos excel", "*.xlsx"), 
                                                   ("Todos os arquivos", "*.*")])
             file_name = os.path.basename(file_path)
-            loaded_routes[key] = Routine(file_name)
+            if file_name == "":
+                return
+            else: 
+                loaded_routes[key] = Routine(file_name)
            
         elif result == 'no':
             loaded_routes[key] = Routine()
