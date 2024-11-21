@@ -18,9 +18,7 @@ def set_pause_time(*args):
 
 
 # ORGANIZAR O CÓDIGO
-# Adicionar e excluir comandos em posições específicas
 # Caminho para as planilhas dentro do próprio aplicativo
-
 
 # poder renomear os objetos
 
@@ -51,7 +49,8 @@ def update_command_list():
         
             command_listbox.insert(END, f" {func.func.__name__}{func.args}")
             
-        show_loop_times()  
+        show_loop_times()
+   
             
             
 def show_loop_times():
@@ -135,11 +134,19 @@ def press_key(key):
         append_func(partial(pyautogui.press, key))
     
 # COMANDOS DO USUÁRIO
+
+
 # Adicionar funções à rotina
 def append_func(function):
     
+    command_index = command_listbox.curselection()
+   
     partial_func = partial(function)
-    loaded_routes[combo_routine.get()].add_function(partial_func)
+    
+    if command_index == ():
+        loaded_routes[combo_routine.get()].add_function(partial_func)
+    else:    
+        loaded_routes[combo_routine.get()].add_function(partial_func, command_index[0])
     
     save_route()
     update_command_list()
@@ -151,12 +158,18 @@ def append_func(function):
 
 # Excluir comandos dentro das rotinas
 def exclude_func():
+    command_index = command_listbox.curselection()
+    
     if combo_routine.get() == '':
         messagebox.showerror('Error', 'Por favor, selecione um mapa')
-    else:
+    elif command_index == ():
         loaded_routes[combo_routine.get()].exclude_function()
-        save_route()
-        update_command_list()
+    else:
+        loaded_routes[combo_routine.get()].exclude_function(command_index[0])
+        
+    save_route()
+    update_command_list()
+
    
 # Executar rota de comandos    
 def execute_route():
@@ -180,12 +193,12 @@ def execute_route():
                 
                     
 
-# Atualizar rotina com as novas funções
+# Atualizar mapa com as novas funções
 def save_route(file_name="mapa_comandos.pkl"):
     with open(file_name, "wb") as file:
         pickle.dump(loaded_routes, file)
         
-# Criar novas rotas
+# Criar novos mapas
 def create_objects(key, file_name='mapa_comandos.pkl', ):
     if key == '':
         messagebox.showerror('Error', 'Digite um nome, por favor')
@@ -216,7 +229,7 @@ def create_objects(key, file_name='mapa_comandos.pkl', ):
     update_routine_list()
             
 
-# Excluir rotinas
+# Excluir mapas
 def exclude_routines():
     if combo_routine.get() == '':
         messagebox.showerror('Error', 'Por favor, selecione um mapa primeiro')
