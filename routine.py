@@ -9,12 +9,12 @@ class Routine:
     def add_function(self, function, index=None):
         if index:
             self.functions.insert(index, function)
+        elif index == 0:
+             self.functions.insert(index, function)
         else:
             self.functions.append(function)
         
-    def exclude_function(self, index=None):
-        if index:   
-            self.functions.pop(index)
-        else:
-            self.functions.pop()
+    def exclude_function(self, index=-1):
+        self.functions.pop(index)
+        
 

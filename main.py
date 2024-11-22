@@ -160,6 +160,7 @@ def append_func(function):
 def exclude_func():
     command_index = command_listbox.curselection()
     
+    
     if combo_routine.get() == '':
         messagebox.showerror('Error', 'Por favor, selecione um mapa')
     elif command_index == ():
