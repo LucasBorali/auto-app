@@ -188,6 +188,7 @@ def execute_route():
                 i += 1
                 time.sleep(1)
         else:
+            while True:
                 for function in loaded_routes[combo_routine.get()].functions:
                     function()
                 
@@ -252,7 +253,6 @@ def exclude_routines():
 root = Tk()
 root.title('TaskFy')
 root.iconbitmap('./config/tech.ico')
-
 
 speed_div = ttk.Frame()
 speed_div.pack(pady=15)
@@ -323,3 +323,4 @@ ttk.Button(config_buttons_div, padding=5, cursor='hand2', text='Excluir comando'
 
 
 root.mainloop()
+
