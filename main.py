@@ -9,36 +9,43 @@ import pandas as pd
 import os
 import aiohttp
 import asyncio
-import sys
 
 
 def new_license_code():
     license_code = simpledialog.askstring(title='TaskFy',prompt='Insira o código de sua licença:')
-    if license_code:
+    if license_code or license_code == '':
         return license_code
     else:
-        raise Exception("canceled")
+        return 'canceled'
     
 
 def get_license(option=None):
     if option == 'yes':
         LICENSE = new_license_code()
-        with open('license.txt', 'w') as file:
-            file.write(LICENSE)       
+        if LICENSE == 'canceled':
+            pass
+        else:
+            with open('license.txt', 'w') as file:
+                file.write(LICENSE)         
     try:
         with open('license.txt', 'r') as file:
             LICENSE = file.read()
             if LICENSE == '':
                 LICENSE = new_license_code()
-                with open('license.txt', 'w') as file:
-                    file.write(LICENSE)       
+                if LICENSE == 'canceled':
+                    pass
+                else:
+                    with open('license.txt', 'w') as file:
+                        file.write(LICENSE)      
     except FileNotFoundError:
         LICENSE = new_license_code()
-        with open('license.txt', 'w') as file:
-            file.write(LICENSE)
-    except Exception as e:
-        return e
+        if LICENSE == 'canceled':
+            pass
+        else:
+            with open('license.txt', 'w') as file:
+                file.write(LICENSE)
     return LICENSE
+  
     
 
 
@@ -361,31 +368,30 @@ def app():
 
 async def main():
     LICENSE = get_license()
-   
-    url = f'https://auto-app-5996d-default-rtdb.firebaseio.com/LICENSE/{LICENSE}.json'
-    async with aiohttp.ClientSession() as session:
-        
-        async with session.get(url) as response:
-            if response.status == 200:
-                data = await response.json()
+    if LICENSE == 'canceled' :
+        return
+    else:
+        url = f'https://auto-app-5996d-default-rtdb.firebaseio.com/LICENSE/{LICENSE}.json'
+        async with aiohttp.ClientSession() as session:
+            
+            async with session.get(url) as response:
+                if response.status == 200:
+                    data = await response.json()
 
-                try:
-                    if data['Access'] is True:
-                        app()
-                    else:
-                        raise Exception
-                except Exception as e:
-                    print(LICENSE)
-                    if LICENSE == "canceled":
-                        return
-                    option = messagebox.askquestion(message='Uma licença válida não foi encontrada. \nDeseja cadastrar uma nova?')
-                    if option == 'yes':
-                        LICENSE = get_license(option)
-                        await main()
-                    else:
-                        return
-            else:
-                messagebox.showerror(message='Verifique a conexão ou contate seu provedor!')
-           
+                    try:
+                        if data['Access'] is True:
+                            app()
+                        else:
+                            raise Exception
+                    except Exception as e:
+                        option = messagebox.askquestion(message='Uma licença válida não foi encontrada. \nDeseja cadastrar uma nova?')
+                        if option == 'yes':
+                            LICENSE = get_license(option)
+                            
+                            await main()
+                        else:
+                            return
+                else:
+                    messagebox.showerror(message='Verifique a conexão ou contate seu provedor!')
     
 asyncio.run(main())
